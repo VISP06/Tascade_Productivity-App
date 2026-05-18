@@ -93,7 +93,6 @@ fun TodoScreen(
                 onTaskChecked = { task -> vm.updateTask(task) },
                 onTaskDeleted = { task -> vm.deleteTodo(task) },
                 lazyListState = lazyListState,
-
                 )
 
         }

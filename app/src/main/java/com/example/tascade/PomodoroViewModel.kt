@@ -1,15 +1,16 @@
 package com.example.tascade
 
-import android.media.SoundPool
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.tascade.data.TimerDataStore.Companion.IS_WORK_SESSION
+import com.example.tascade.data.TimerDataStore.Companion.TARGET_END_TIME
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import androidx.datastore.preferences.core.edit
+
 
 class PomodoroViewModel : ViewModel() {
 
@@ -89,4 +90,15 @@ class PomodoroViewModel : ViewModel() {
             _breakDuration.value -= 60
         }
     }
+
+    //we use future time because when the user closes the app and re opens at a later point in time then
+    //then it will show the time that was saved when started which is wrong as time has passed since then
+    suspend fun saveTimerState(timeRemaining: Long, isWork:Boolean){
+        context.dataStore.edit{ preferences ->
+            val futureTime = System.currentTimeMillis() + (timeRemaining*1000)
+            preferences[TARGET_END_TIME] = futureTime
+            preferences[IS_WORK_SESSION] = isWork
+        }
+    }
+
 }
