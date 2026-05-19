@@ -1,5 +1,6 @@
 package com.example.tascade.ui.pomodoro
 
+import android.app.Activity
 import android.media.SoundPool
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.filled.Expand
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -31,7 +33,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.example.tascade.PomodoroViewModel
 import com.example.tascade.R
 import com.example.tascade.ui.pomodoro.components.DecrementButton
@@ -77,6 +83,22 @@ fun PomodoroScreen(
     LaunchedEffect(time) {
         if(time == 0)
             soundPool.play(alarmSoundId, 1f, 1f, 1, 0, 1f)
+    }
+    val view = LocalView.current
+    val window = (view.context as Activity).window
+
+    // 2. The Effect that watches your isFullScreen variable
+    DisposableEffect(isFullScreen) {
+        val insetsController = WindowCompat.getInsetsController(window, view)
+        if (isFullScreen) {
+            insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            insetsController.hide(WindowInsetsCompat.Type.systemBars())
+        } else {
+            insetsController.show(WindowInsetsCompat.Type.systemBars())
+        }
+        onDispose {
+            insetsController.show(WindowInsetsCompat.Type.systemBars())
+        }
     }
     if(isFullScreen){
         FullScreenMode(timeString = timeString, pomodoroViewModel = pomodoroViewModel, onExpand = onFullScreenToggle)

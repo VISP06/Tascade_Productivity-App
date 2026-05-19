@@ -93,12 +93,6 @@ class PomodoroViewModel : ViewModel() {
 
     //we use future time because when the user closes the app and re opens at a later point in time then
     //then it will show the time that was saved when started which is wrong as time has passed since then
-    suspend fun saveTimerState(timeRemaining: Long, isWork:Boolean){
-        context.dataStore.edit{ preferences ->
-            val futureTime = System.currentTimeMillis() + (timeRemaining*1000)
-            preferences[TARGET_END_TIME] = futureTime
-            preferences[IS_WORK_SESSION] = isWork
-        }
-    }
+
 
 }

@@ -66,17 +66,18 @@ fun TodoScreen(
             },
             soundPool = soundPool,
             buttonSoundId = buttonSoundId,
-            modifier = Modifier.padding(globalPadding)
+            modifier = Modifier.padding(globalPadding),
+
         )
         }
-
     ) { innerPadding ->
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xFFFACC15))
-                .halftoneBackground(),
+                .halftoneBackground()
+                .padding(innerPadding),
             contentAlignment = Alignment.Center
 
         ) {
@@ -84,12 +85,7 @@ fun TodoScreen(
 
             TodoList(
                 tasks = tasks,
-                contentPaddingValues = PaddingValues(
-                    top = innerPadding.calculateTopPadding(),
-                    bottom = innerPadding.calculateBottomPadding(),
-                    start = 0.dp,
-                    end = 0.dp
-                ),
+                contentPaddingValues = globalPadding,
                 onTaskChecked = { task -> vm.updateTask(task) },
                 onTaskDeleted = { task -> vm.deleteTodo(task) },
                 lazyListState = lazyListState,
