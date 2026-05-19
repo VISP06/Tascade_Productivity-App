@@ -23,6 +23,17 @@ All in one sleek productivity app.
   <img src="app/screenshots/ss_5.png" width="18%">
 </p>
 
+## 🛠 Tech Stack & Architecture
+
+- **Kotlin** + **Jetpack Compose**   
+ with Material 3
+- **MVVM + UDF** architecture for scalable state management
+- **Coroutines & StateFlow** for reactive UI updates
+- **Room Database** with Repository Pattern for offline-first storage
+- **Retrofit2** + **Gson/Kotlin Serialization** for API integration
+- **Navigation Compose** with optimized back-stack handling
+- Advanced **Compose Animations** for smooth interactions
+
 ## 📥 Installation
 
 ### For Users
@@ -109,15 +120,5 @@ app/
 * **Offline-First Task Tracker:** Create, update, and manage your daily to-dos instantly using a local Room database that works flawlessly without an internet connection.
 * **Tactile Custom UI:** A highly polished, custom bottom navigation bar that leverages Jetpack Compose `AnimatedContent` for fluid, reactive screen transitions.
 
-## 🛠 Tech Stack & Architecture
-
-- **Kotlin** + **Jetpack Compose**   
- with Material 3
-- **MVVM + UDF** architecture for scalable state management
-- **Coroutines & StateFlow** for reactive UI updates
-- **Room Database** with Repository Pattern for offline-first storage
-- **Retrofit2** + **Gson/Kotlin Serialization** for API integration
-- **Navigation Compose** with optimized back-stack handling
-- Advanced **Compose Animations** for smooth interactions
 
 
