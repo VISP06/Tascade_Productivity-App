@@ -13,6 +13,16 @@ Designed with a bold **neo-brutalist aesthetic** and built entirely using modern
 
 All in one sleek productivity app.
 
+## 📸 Screenshots
+
+<p align="center">
+  <img src="app/screenshots/ss_1.png" width="18%">
+  <img src="app/screenshots/ss_2.png" width="18%">
+  <img src="app/screenshots/ss_3.png" width="18%">
+  <img src="app/screenshots/ss_4.png" width="18%">
+  <img src="app/screenshots/ss_5.png" width="18%">
+</p>
+
 ## 📥 Installation
 
 ### For Users
@@ -110,13 +120,4 @@ app/
 - **Navigation Compose** with optimized back-stack handling
 - Advanced **Compose Animations** for smooth interactions
 
-## 📸 Screenshots
-
-<p align="center">
-  <img src="app/screenshots/ss_1.png" width="18%">
-  <img src="app/screenshots/ss_2.png" width="18%">
-  <img src="app/screenshots/ss_3.png" width="18%">
-  <img src="app/screenshots/ss_4.png" width="18%">
-  <img src="app/screenshots/ss_5.png" width="18%">
-</p>
 
