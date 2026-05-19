@@ -16,11 +16,12 @@ All in one sleek productivity app.
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="app/screenshots/ss_1.png" width="18%">
-  <img src="app/screenshots/ss_2.png" width="18%">
-  <img src="app/screenshots/ss_3.png" width="18%">
-  <img src="app/screenshots/ss_4.png" width="18%">
-  <img src="app/screenshots/ss_5.png" width="18%">
+  <img src="app/screenshots/ss_1.png" width="15%">
+  <img src="app/screenshots/ss_6.png" width="15%">
+  <img src="app/screenshots/ss_2.png" width="15%">
+  <img src="app/screenshots/ss_3.png" width="15%">
+  <img src="app/screenshots/ss_4.png" width="15%">
+  <img src="app/screenshots/ss_5.png" width="15%">
 </p>
 
 ## 🛠 Tech Stack & Architecture
