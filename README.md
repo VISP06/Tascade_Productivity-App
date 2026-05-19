@@ -26,8 +26,7 @@ All in one sleek productivity app.
 
 ## 🛠 Tech Stack & Architecture
 
-- **Kotlin** + **Jetpack Compose**   
- with Material 3
+- **Kotlin** + **Jetpack Compose** with Material 3
 - **MVVM + UDF** architecture for scalable state management
 - **Coroutines & StateFlow** for reactive UI updates
 - **Room Database** with Repository Pattern for offline-first storage
@@ -46,7 +45,7 @@ All in one sleek productivity app.
 
 ### For Developers
 ```bash
-git clone https://github.com/yourusername/tascade.git
+git clone https://github.com/yourusername/tascade.git](https://github.com/VISP06/Tascade_To-do-App.git
 ```
 
 1. Open the project in **Android Studio**
