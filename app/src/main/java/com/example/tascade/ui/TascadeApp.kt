@@ -6,10 +6,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.tascade.PomodoroViewModel
+import com.example.tascade.PomodoroViewModelFactory
+import com.example.tascade.data.TimerDataStore
 import com.example.tascade.navigation.TascadeNavGraph
 import com.example.tascade.ui.components.MainBottomBar
 import com.example.tascade.ui.theme.TascadeTheme
@@ -23,7 +26,9 @@ fun TascadeApp() {
         bottomBar = {if(!isFullScreen)MainBottomBar(navController = navController)}
     ) {
         innerPadding->
-        val pvm: PomodoroViewModel = viewModel()
+        val context = LocalContext.current
+        val dataStore = TimerDataStore(context)
+        val pvm: PomodoroViewModel = viewModel(factory = PomodoroViewModelFactory(dataStore))
         TascadeNavGraph(
             navController = navController,
             innerPadding = innerPadding,

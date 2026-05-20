@@ -1,18 +1,53 @@
 package com.example.tascade
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.tascade.data.TimerDataStore.Companion.IS_WORK_SESSION
-import com.example.tascade.data.TimerDataStore.Companion.TARGET_END_TIME
+import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import androidx.datastore.preferences.core.edit
+import com.example.tascade.data.TimerDataStore
+import kotlin.reflect.KClass
 
 
-class PomodoroViewModel : ViewModel() {
+class PomodoroViewModel(val dataStore: TimerDataStore) : ViewModel() {
+
+    init {
+        // Pipe 1: Restore the session type (Work vs Break)
+        viewModelScope.launch {
+            dataStore.isWorkSessionFlow.collect { isWork ->
+                _isWorkSession.value = isWork
+            }
+        }
+
+        // Pipe 2: The Wake-Up Math!
+        viewModelScope.launch {
+            dataStore.targetTimeFlow.collect { targetTime ->
+                // If the target time is 0, it means the file is empty (first time opening app)
+                if (targetTime > 0L) {
+                    val currentTime = System.currentTimeMillis()
+                    val timeRemainingMillis = targetTime - currentTime
+
+                    if (timeRemainingMillis > 0) {
+                        // 1. Timer is still active! Convert to seconds and update UI
+                        _timerValue.value = (timeRemainingMillis / 1000).toInt()
+
+                        // 2. Restart the background countdown loop automatically
+                        if (!_isRunning.value) {
+                            startTimer()
+                        }
+                    } else {
+                        // The timer completely finished while the app was closed!
+                        _timerValue.value = 0
+                        _isRunning.value = false
+                    }
+                }
+            }
+        }
+    }
 
     private val _timerValue = MutableStateFlow(1500)
     val timerValue: StateFlow<Int> = _timerValue.asStateFlow()
@@ -44,7 +79,7 @@ class PomodoroViewModel : ViewModel() {
 
         viewModelScope.launch {
             _isRunning.value = true
-
+            dataStore.saveTimerState(timeRemainingSeconds = _timerValue.value, isWork = _isWorkSession.value)
             while (_isRunning.value) {
 
                 if (_timerValue.value > 0) {
@@ -90,9 +125,17 @@ class PomodoroViewModel : ViewModel() {
             _breakDuration.value -= 60
         }
     }
+}
 
-    //we use future time because when the user closes the app and re opens at a later point in time then
-    //then it will show the time that was saved when started which is wrong as time has passed since then
+class PomodoroViewModelFactory(private val timerDataStore: TimerDataStore) : ViewModelProvider.Factory {
 
-
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: KClass<T>, extras: CreationExtras): T {
+        // 1. Check if the UI is asking for the PomodoroViewModel
+        if (modelClass.isInstance(PomodoroViewModel::class)) {
+            // 2. Manually build it and inject the DataStore
+            return PomodoroViewModel(timerDataStore) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.simpleName}")
+    }
 }
