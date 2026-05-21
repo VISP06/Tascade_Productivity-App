@@ -49,7 +49,7 @@ fun PomodoroBoard(
             modifier = Modifier
                 .fillMaxSize()
                 .offset(x = (-4).dp, y = (-4).dp)
-                .background(color = Color.White)
+                .background(color = if(pomodoroViewModel.isWorkSession.collectAsState().value) {Color.White} else { Color.Cyan })
                 .border(color = Color.Black, shape = RectangleShape, width = 2.dp),
             contentAlignment = Alignment.Center
         ) {

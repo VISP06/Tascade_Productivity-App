@@ -51,7 +51,7 @@ fun FullScreenMode(
             modifier = Modifier
                 .fillMaxSize()
                 .offset(x = (-8).dp, y = (-8).dp)
-                .background(color = Color.White)
+                .background(color = if(pomodoroViewModel.isWorkSession.collectAsState().value) {Color.White} else { Color.Cyan })
                 .border(width = 4.dp, color = Color.Black),
             contentAlignment = Alignment.Center
         ) {

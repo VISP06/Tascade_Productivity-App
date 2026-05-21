@@ -1,43 +1,56 @@
 package com.example.tascade.data
 
 import android.content.Context
-import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "timer_preferences")
+private val Context.dataStore by preferencesDataStore("timer_prefs")
 
-class TimerDataStore(private val context: Context) {
+data class SavedTimerState(
+    val targetTime: Long,
+    val timeRemaining: Int,
+    val isRunning: Boolean,
+    val isWork: Boolean
+)
+
+class TimerDataStore(context: Context) {
+    private val dataStore = context.dataStore
 
     companion object {
-        val TARGET_END_TIME = longPreferencesKey("target_end_time")
-        val IS_WORK_SESSION = booleanPreferencesKey("is_work_session")
-    }
-
-    suspend fun saveTimerState(timeRemainingSeconds: Int, isWork: Boolean) {
         //we use future time because when the user closes the app and re opens at a later point in time then
         //then it will show the time that was saved when started which is wrong as time has passed since then
-        val timeRemainingMillis = timeRemainingSeconds * 1000L
-        val targetEndTime = System.currentTimeMillis() + timeRemainingMillis
-
-        context.dataStore.edit { preferences ->
-            preferences[TARGET_END_TIME] = targetEndTime
-            preferences[IS_WORK_SESSION] = isWork
-        }
+        val TARGET_TIME = longPreferencesKey("target_time")
+        val TIME_REMAINING = intPreferencesKey("time_remaining")
+        val IS_RUNNING = booleanPreferencesKey("is_running")
+        val IS_WORK = booleanPreferencesKey("is_work")
     }
 
-    val targetTimeFlow: Flow<Long> = context.dataStore.data
-        .map { preferences ->
-            preferences[TARGET_END_TIME] ?: 0L //to prevent crashing if the user just downloaded the app and assign it with 0 instead
-        }
+    // Read the single package
+    val savedStateFlow: Flow<SavedTimerState> = dataStore.data.map { prefs ->
+        SavedTimerState(
+            targetTime = prefs[TARGET_TIME] ?: 0L,
+            timeRemaining = prefs[TIME_REMAINING] ?: 1500,
+            isRunning = prefs[IS_RUNNING] ?: false,
+            isWork = prefs[IS_WORK] ?: true
+        )
+    }
 
-    val isWorkSessionFlow: Flow<Boolean> = context.dataStore.data
-        .map { preferences ->
-            preferences[IS_WORK_SESSION] ?: true
+    suspend fun saveTimerState(timeRemaining: Int, isWork: Boolean, isRunning: Boolean) {
+        dataStore.edit { prefs ->
+            prefs[TIME_REMAINING] = timeRemaining
+            prefs[IS_WORK] = isWork
+            prefs[IS_RUNNING] = isRunning
+
+            if (isRunning) {
+                prefs[TARGET_TIME] = System.currentTimeMillis() + (timeRemaining * 1000L)
+            } else {
+                prefs[TARGET_TIME] = 0L
+            }
         }
+    }
 }
