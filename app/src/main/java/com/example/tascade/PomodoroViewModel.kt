@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.example.tascade.data.TimerDataStore
+import kotlinx.coroutines.flow.first
 
 class PomodoroViewModel(val dataStore: TimerDataStore) : ViewModel() {
     private val _timerValue = MutableStateFlow(1500)
@@ -28,37 +29,16 @@ class PomodoroViewModel(val dataStore: TimerDataStore) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            dataStore.savedStateFlow.collect { state ->
-                _isWorkSession.value = state.isWork
-
-                if (state.isRunning && state.targetTime > 0L) {
-                    // App was closed while running. Do the math!
-                    val currentTime = System.currentTimeMillis()
-                    val timeRemainingMillis = state.targetTime - currentTime
-
-                    if (timeRemainingMillis > 0) {
-                        _timerValue.value = (timeRemainingMillis / 1000).toInt()
-                        if (!_isRunning.value) {
-                            startTimer()
-                        }
-                    } else {
-                        // Timer finished while app was closed
-                        _timerValue.value = 0
-                        _isRunning.value = false
-                    }
-                } else {
-                    // App was closed while Paused or Reset. Load exact numbers!
-                    _timerValue.value = state.timeRemaining
-                    _isRunning.value = false
-                }
-            }
+            val state = dataStore.savedStateFlow.first()
+            _isWorkSession.value = state.isWork
+            _timerValue.value = state.timeRemaining
+            _isRunning.value = false
         }
     }
 
     fun pauseTimer() {
         _isRunning.value = false
         viewModelScope.launch {
-            // Tell the DataStore we paused!
             dataStore.saveTimerState(timeRemaining = _timerValue.value, isWork = _isWorkSession.value, isRunning = false)
         }
     }
@@ -68,7 +48,7 @@ class PomodoroViewModel(val dataStore: TimerDataStore) : ViewModel() {
         _timerValue.value = _workDuration.value
         _isWorkSession.value = true
         viewModelScope.launch {
-            // Tell the DataStore we reset to square 1!
+            //datastore gets resetted
             dataStore.saveTimerState(timeRemaining = _workDuration.value, isWork = true, isRunning = false)
         }
     }
@@ -85,6 +65,11 @@ class PomodoroViewModel(val dataStore: TimerDataStore) : ViewModel() {
                     delay(1000L)
                     if (_isRunning.value) {
                         _timerValue.value -= 1
+                        if (_timerValue.value % 5 == 0) {
+                            viewModelScope.launch {
+                                dataStore.saveTimerState(timeRemaining = _timerValue.value, isWork = _isWorkSession.value, isRunning = true)
+                            }
+                        }
                     }
                 } else {
                     delay(1000L)
