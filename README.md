@@ -30,7 +30,6 @@ All in one sleek productivity app.
 - **MVVM + UDF** architecture for scalable state management
 - **Coroutines & StateFlow** for reactive UI updates
 - **Room Database** with Repository Pattern for offline-first storage
-- **Retrofit2** + **Gson/Kotlin Serialization** for API integration
 - **Navigation Compose** with optimized back-stack handling
 - Advanced **Compose Animations** for smooth interactions
 
@@ -106,7 +105,7 @@ app/
 └── Gradle Scripts
 ```
 
-## 🚀 Usage
+## 📊 Usage
 
 - Create, edit, and delete tasks effortlessly
 - Organize your workflow with a clean and responsive UI
@@ -116,9 +115,9 @@ app/
 
 ## ✨ Key Features
 
-* **Smart App-Blocking Timer:** A Pomodoro focus timer that syncs with a backend REST API via Retrofit to automatically restrict distracting apps on your device during active sessions.
+* **Built-In Pomodoro Timer:** Stay productive with a clean and distraction-free focus timer designed to help you maintain deep work sessions and build consistent study habits.
 * **Offline-First Task Tracker:** Create, update, and manage your daily to-dos instantly using a local Room database that works flawlessly without an internet connection.
 * **Tactile Custom UI:** A highly polished, custom bottom navigation bar that leverages Jetpack Compose `AnimatedContent` for fluid, reactive screen transitions.
-
+* **Modern Android Architecture:** Built using MVVM, UDF, StateFlow, and Jetpack Compose to deliver a scalable, maintainable, and responsive app experience.
 
 
