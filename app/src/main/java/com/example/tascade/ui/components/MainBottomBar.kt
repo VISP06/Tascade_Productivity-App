@@ -103,6 +103,25 @@ fun MainBottomBar(
                 }
 
             }
+            AnimatedContent(
+                targetState = (currentRoute == AppRoutes.NOTES)
+            ) { isActive->
+                if(isActive){
+                    NotesIconFocused()
+                }else{
+                    NotesIconDefault(onNotesClick = {navController.navigate(AppRoutes.NOTES){
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+
+                        // RULE 2: No Clones
+                        launchSingleTop = true
+
+                        // RULE 3: Remember My Place
+                        restoreState = true
+                    } })
+                }
+            }
         }
 
     }
@@ -249,6 +268,78 @@ fun TaskIconDefault(modifier: Modifier = Modifier, onTaskClick:()->Unit){
             )
             Text(
                 text = "TASKS",
+                color = Color.Black,
+                style = androidx.compose.ui.text.TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = BebasNeue,
+                    fontSize = 12.sp
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun NotesIconFocused(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .height(80.dp)
+            .clip(shape = RectangleShape)
+            .aspectRatio(1f)
+            .background(Color.Black)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .offset(x = (-4).dp, y = (-4).dp)
+                .background(Color(0xFF7B1FA2))
+                .border(width = 3.dp, color = Color.Black),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(28.dp)
+                )
+                Text(
+                    text = "NOTES",
+                    color = Color.White,
+                    style = androidx.compose.ui.text.TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        fontFamily = BebasNeue
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun NotesIconDefault(modifier: Modifier = Modifier, onNotesClick: () -> Unit) {
+    Box(
+        modifier = modifier
+            .height(80.dp)
+            .aspectRatio(1f)
+            .background(color = Color(0xFFF2C300))
+            .clickable(
+                onClick = {
+                    onNotesClick()
+                }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = Color.Black
+            )
+            Text(
+                text = "NOTES",
                 color = Color.Black,
                 style = androidx.compose.ui.text.TextStyle(
                     fontWeight = FontWeight.Bold,

@@ -7,35 +7,48 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.tascade.PomodoroViewModel
 import com.example.tascade.TodoViewModel
+import com.example.tascade.NotesViewModel
+import com.example.tascade.NotesViewModelFactory
 import com.example.tascade.data.OfflineTodoRepository
 import com.example.tascade.data.TodoDatabase
+import com.example.tascade.data.NoteDatabase
+import com.example.tascade.data.OfflineNoteRepository
 import com.example.tascade.navigation.AppRoutes.POMODORO
 import com.example.tascade.navigation.AppRoutes.TASKS
+import com.example.tascade.navigation.AppRoutes.NOTES
+import com.example.tascade.navigation.AppRoutes.EDIT_NOTE
 import com.example.tascade.ui.pomodoro.PomodoroScreen
 import com.example.tascade.ui.todo.TodoScreen
+import com.example.tascade.ui.notes.NotesListScreen
+import com.example.tascade.ui.notes.NoteEditScreen
 
 @Composable
 fun TascadeNavGraph(
     navController: NavHostController,
     innerPadding: PaddingValues,
-    modifier:Modifier = Modifier,
+    modifier: Modifier = Modifier,
     pomodoroViewModel: PomodoroViewModel,
     isFullScreen: Boolean,
     onFullScreenToggle: () -> Unit
 ){
+    val context = LocalContext.current
+    val notesDatabase = remember { NoteDatabase.getDatabase(context) }
+    val notesRepository = remember { OfflineNoteRepository(notesDatabase.noteDao()) }
+    val notesViewModel: NotesViewModel = viewModel(factory = NotesViewModelFactory(notesRepository))
+
     NavHost(
         navController = navController,
         startDestination = TASKS,
-        //navigation graph is created in memory by this
-        /*builder = {
-            composable(AppRoutes.TASKS) { /* ... */ }
-        }*/
-    ){ // <-- The builder lambda was moved outside the parentheses
+        modifier = modifier
+    ){
         composable(route = TASKS){
             //Database Instantiation
             val databaseObject = TodoDatabase.getDatabase(context = LocalContext.current)
@@ -52,7 +65,55 @@ fun TascadeNavGraph(
             PomodoroScreen(globalPadding = innerPadding, pomodoroViewModel = pomodoroViewModel, isFullScreen = isFullScreen,
                 onFullScreenToggle = onFullScreenToggle)
         }
+        composable(route = NOTES){
+            val notes by notesViewModel.notes.collectAsState()
+            NotesListScreen(
+                notes = notes,
+                onNoteClick = { note ->
+                    navController.navigate("edit_note_route?noteId=${note.id}")
+                },
+                onAddNoteClick = {
+                    navController.navigate("edit_note_route")
+                },
+                onDeleteNote = { note ->
+                    notesViewModel.deleteNote(note)
+                },
+                globalPadding = innerPadding
+            )
+        }
+        composable(
+            route = EDIT_NOTE,
+            arguments = listOf(
+                navArgument("noteId") {
+                    type = NavType.IntType
+                    defaultValue = -1
+                }
+            )
+        ) { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getInt("noteId") ?: -1
+            val notesList by notesViewModel.notes.collectAsState()
+            val note = notesList.find { it.id == noteId }
+
+            NoteEditScreen(
+                note = note,
+                onSave = { title, content ->
+                    if (note == null) {
+                        notesViewModel.addNote(title, content)
+                    } else {
+                        notesViewModel.updateNote(
+                            note.copy(title = title, content = content, timestamp = System.currentTimeMillis())
+                        )
+                    }
+                    navController.popBackStack()
+                },
+                onBack = {
+                    navController.popBackStack()
+                },
+                globalPadding = innerPadding
+            )
+        }
     }
 }
+
 
 //remember abt modifier's align function for certain ui components inside bigger ui components, they don't work as intended in certain layouts like rows/columns
