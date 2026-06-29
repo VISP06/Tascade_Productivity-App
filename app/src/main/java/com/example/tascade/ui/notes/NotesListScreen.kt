@@ -58,7 +58,7 @@ fun NotesListScreen(
         floatingActionButton = {
             NotesFAB(
                 onClick = onAddNoteClick,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(globalPadding)
             )
         }
     ) { innerPadding ->
@@ -169,6 +169,7 @@ fun NotesFAB(
     Box(
         modifier = modifier
             .background(Color.Black)
+            .padding(start = 4.dp, top = 4.dp)
             .clickable(
                 onClick = onClick,
                 interactionSource = interactionSource,
@@ -178,7 +179,7 @@ fun NotesFAB(
         Box(
             modifier = Modifier
                 .offset(x = offsetAnimation, y = offsetAnimation)
-                .background(Color(0xFFFACC15)) // Vibrant Yellow
+                .background(Color(0xFF00E5FF)) // Bright Cyan
                 .border(width = 2.dp, color = Color.Black, shape = RectangleShape)
                 .padding(16.dp),
             contentAlignment = Alignment.Center
