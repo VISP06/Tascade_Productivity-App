@@ -1,13 +1,14 @@
 # Tascade
 
-### *Plan Tasks. Stay Focused. Get Things Done.*
+### *Plan Tasks. Stay Focused. Capture Ideas. Get Things Done.*
 
-Tascade is a modern Android productivity app that combines a powerful **task manager** with a built-in **Pomodoro timer** to help you stay organized, focused, and consistent throughout your day.
+Tascade is a modern Android productivity app that combines a powerful **task manager**, a built-in **Pomodoro timer**, and a dedicated **notes manager** to help you stay organized, focused, and consistent throughout your day.
 
 Designed with a bold **neo-brutalist aesthetic** and built entirely using modern Android development tools, Tascade delivers a fast, smooth, and distraction-free productivity experience.
 
 ✅ Manage daily tasks  
 ⏳ Track focus sessions  
+📝 Capture and edit quick notes  
 🔥 Build productive habits  
 📱 Enjoy a clean and responsive UI  
 
@@ -17,11 +18,14 @@ All in one sleek productivity app.
 
 <p align="center">
   <img src="app/screenshots/ss_1.png" width="15%">
-  <img src="app/screenshots/ss_6.png" width="15%">
   <img src="app/screenshots/ss_2.png" width="15%">
   <img src="app/screenshots/ss_3.png" width="15%">
   <img src="app/screenshots/ss_4.png" width="15%">
   <img src="app/screenshots/ss_5.png" width="15%">
+  <img src="app/screenshots/ss_6.png" width="15%">
+  <img src="app/screenshots/ss_7.png" width="15%">
+  <img src="app/screenshots/ss_8.png" width="15%">
+  <img src="app/screenshots/ss_9.png" width="15%">
 </p>
 
 ## 🛠 Tech Stack & Architecture
@@ -29,7 +33,8 @@ All in one sleek productivity app.
 - **Kotlin** + **Jetpack Compose** with Material 3
 - **MVVM + UDF** architecture for scalable state management
 - **Coroutines & StateFlow** for reactive UI updates
-- **Room Database** with Repository Pattern for offline-first storage
+- **Room Database** with Repository Pattern for offline-first storage of tasks and notes
+- **DataStore** for efficient local preference and timer state saving
 - **Navigation Compose** with optimized back-stack handling
 - Advanced **Compose Animations** for smooth interactions
 
@@ -44,7 +49,7 @@ All in one sleek productivity app.
 
 ### For Developers
 ```bash
-git clone https://github.com/yourusername/tascade.git](https://github.com/VISP06/Tascade_To-do-App.git
+git clone [https://github.com/VISP06/Tascade_To-do-App.git](https://github.com/VISP06/Tascade_To-do-App.git)
 ```
 
 1. Open the project in **Android Studio**
@@ -60,11 +65,9 @@ app/
 ├── kotlin+java/com.example.tascade/
 │
 ├── data/
-│   ├── OfflineTodoRepository
 │   ├── TimerDataStore.kt
-│   ├── TodoDao
-│   ├── TodoDatabase
-│   └── TodoRepository
+│   ├── TodoDatabase / TodoDao / TodoRepository
+│   └── NoteDatabase / NoteDao / NoteRepository
 │
 ├── model/
 │
@@ -74,13 +77,13 @@ app/
 │
 ├── ui/
 │   ├── components/
+│   ├── notes/
+│   │   ├── NoteDetailScreen.kt
+│   │   ├── NoteEditScreen.kt
+│   │   └── NotesListScreen.kt
+│   │
 │   ├── pomodoro/
 │   │   ├── components/
-│   │   │   ├── ActionButtons.kt
-│   │   │   ├── AdjusterButtons.kt
-│   │   │   ├── FullScreenMode.kt
-│   │   │   ├── PomodoroBoard.kt
-│   │   │   └── TimeAdjusterBlock.kt
 │   │   └── PomodoroScreen.kt
 │   │
 │   ├── theme/
@@ -93,31 +96,22 @@ app/
 ├── MainActivity
 ├── PomodoroViewModel
 ├── TodoViewModel
+├── NotesViewModel
 │
 ├── res/
-│   ├── drawable/
-│   ├── font/
-│   ├── mipmap/
-│   ├── raw/
-│   ├── values/
-│   └── xml/
-│
 └── Gradle Scripts
 ```
 
 ## 📊 Usage
 
-- Create, edit, and delete tasks effortlessly
-- Organize your workflow with a clean and responsive UI
-- Use the built-in **Pomodoro Timer** to stay focused
-- Enable focus mode to reduce distractions during work sessions
-- All data is stored locally for a fast, offline-first experience
+- **Tasks:** Create, edit, and delete daily tasks effortlessly.
+- **Notes:** Quickly draft, read, and edit longer-form ideas in a dedicated workspace.
+- **Focus:** Use the built-in Pomodoro Timer to maintain deep work sessions.
+- **Offline Reliability:** All data is stored locally for a fast, offline-first experience.
 
 ## ✨ Key Features
 
 * **Built-In Pomodoro Timer:** Stay productive with a clean and distraction-free focus timer designed to help you maintain deep work sessions and build consistent study habits.
-* **Offline-First Task Tracker:** Create, update, and manage your daily to-dos instantly using a local Room database that works flawlessly without an internet connection.
-* **Tactile Custom UI:** A highly polished, custom bottom navigation bar that leverages Jetpack Compose `AnimatedContent` for fluid, reactive screen transitions.
+* **Offline-First Task & Note Tracking:** Manage your daily to-dos and capture important ideas instantly using a local Room database that works flawlessly without an internet connection.
+* **Tactile Custom UI:** A highly polished, custom bottom navigation bar that leverages Jetpack Compose `AnimatedContent` for fluid, reactive screen transitions, fully adhering to a striking neo-brutalist design system.
 * **Modern Android Architecture:** Built using MVVM, UDF, StateFlow, and Jetpack Compose to deliver a scalable, maintainable, and responsive app experience.
-
-
