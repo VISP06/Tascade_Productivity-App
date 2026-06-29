@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,7 +22,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -48,7 +46,6 @@ fun NotesListScreen(
     notes: List<Note>,
     onNoteClick: (Note) -> Unit,
     onAddNoteClick: () -> Unit,
-    onDeleteNote: (Note) -> Unit,
     globalPadding: PaddingValues
 ) {
     Scaffold(
@@ -122,8 +119,7 @@ fun NotesListScreen(
                     items(notes, key = { it.id }) { note ->
                         NoteCard(
                             note = note,
-                            onClick = { onNoteClick(note) },
-                            onDeleteClick = { onDeleteNote(note) }
+                            onClick = { onNoteClick(note) }
                         )
                     }
                 }
@@ -179,7 +175,7 @@ fun NotesFAB(
         Box(
             modifier = Modifier
                 .offset(x = offsetAnimation, y = offsetAnimation)
-                .background(Color(0xFF00E5FF)) // Bright Cyan
+                .background(Color(0xFF1A237E))
                 .border(width = 2.dp, color = Color.Black, shape = RectangleShape)
                 .padding(16.dp),
             contentAlignment = Alignment.Center
@@ -187,7 +183,7 @@ fun NotesFAB(
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = "Create Note",
-                tint = Color.Black,
+                tint = Color.White,
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -198,7 +194,6 @@ fun NotesFAB(
 fun NoteCard(
     note: Note,
     onClick: () -> Unit,
-    onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -226,74 +221,27 @@ fun NoteCard(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = note.title.ifEmpty { "Untitled" },
-                        color = Color(0xFF1A237E), // Deep Blue
-                        fontSize = 24.sp,
-                        fontFamily = BebasNeue,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = note.content,
-                        color = Color.Black,
-                        fontSize = 14.sp,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    val dateStr = remember(note.timestamp) {
-                        java.text.SimpleDateFormat("dd MMM yyyy, hh:mm a", java.util.Locale.getDefault()).format(java.util.Date(note.timestamp))
-                    }
-                    Text(
-                        text = dateStr,
-                        color = Color.Gray,
-                        fontSize = 12.sp
-                    )
-                }
-
-                // Delete button
-                val deleteInteractionSource = remember { MutableInteractionSource() }
-                val deleteIsPressed by deleteInteractionSource.collectIsPressedAsState()
-                val deleteOffsetAnimation by animateDpAsState(
-                    targetValue = if (deleteIsPressed) 0.dp else (-2).dp,
-                    label = "DeletePress"
+                Text(
+                    text = note.title.ifEmpty { "Untitled" },
+                    color = Color(0xFF1A237E), // Deep Blue
+                    fontSize = 24.sp,
+                    fontFamily = BebasNeue,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
-
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .background(Color.Black)
-                        .clickable(
-                            onClick = onDeleteClick,
-                            interactionSource = deleteInteractionSource,
-                            indication = null
-                        )
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .offset(x = deleteOffsetAnimation, y = deleteOffsetAnimation)
-                            .background(Color(0xFFEF4444)) // Red
-                            .border(width = 1.5.dp, color = Color.Black, shape = RectangleShape)
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete Note",
-                            tint = Color.White,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
+                Spacer(modifier = Modifier.height(8.dp))
+                val dateStr = remember(note.timestamp) {
+                    java.text.SimpleDateFormat("dd MMM yyyy, hh:mm a", java.util.Locale.getDefault()).format(java.util.Date(note.timestamp))
                 }
+                Text(
+                    text = dateStr,
+                    color = Color.Gray,
+                    fontSize = 12.sp
+                )
             }
         }
     }

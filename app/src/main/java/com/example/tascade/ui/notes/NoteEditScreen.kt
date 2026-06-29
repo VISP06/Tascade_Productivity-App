@@ -45,8 +45,8 @@ import com.example.tascade.util.halftoneBackground
 @Composable
 fun NoteEditScreen(
     note: Note?,
-    onSave: (title: String, content: String) -> Unit,
-    onBack: () -> Unit,
+    onSaveClick: (title: String, content: String) -> Unit,
+    onNavigateUp: () -> Unit,
     globalPadding: PaddingValues
 ) {
     var title by remember { mutableStateOf("") }
@@ -86,7 +86,7 @@ fun NoteEditScreen(
                             .size(48.dp)
                             .background(Color.Black)
                             .clickable(
-                                onClick = onBack,
+                                onClick = onNavigateUp,
                                 interactionSource = backInteractionSource,
                                 indication = null
                             )
@@ -176,85 +176,44 @@ fun NoteEditScreen(
                     }
                 }
 
-                // Action Buttons
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                // Save Button
+                val saveInteractionSource = remember { MutableInteractionSource() }
+                val saveIsPressed by saveInteractionSource.collectIsPressedAsState()
+                val saveOffset by animateDpAsState(
+                    targetValue = if (saveIsPressed) 0.dp else (-4).dp,
+                    label = "SaveBtn"
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.Black)
+                        .clickable(
+                            onClick = {
+                                if (title.isNotBlank() || content.isNotBlank()) {
+                                    onSaveClick(title, content)
+                                    onNavigateUp()
+                                }
+                            },
+                            interactionSource = saveInteractionSource,
+                            indication = null
+                        )
                 ) {
-                    // Cancel Button
-                    val cancelInteractionSource = remember { MutableInteractionSource() }
-                    val cancelIsPressed by cancelInteractionSource.collectIsPressedAsState()
-                    val cancelOffset by animateDpAsState(
-                        targetValue = if (cancelIsPressed) 0.dp else (-4).dp,
-                        label = "CancelBtn"
-                    )
                     Box(
                         modifier = Modifier
-                            .weight(1f)
-                            .background(Color.Black)
-                            .clickable(
-                                onClick = onBack,
-                                interactionSource = cancelInteractionSource,
-                                indication = null
-                            )
+                            .offset(x = saveOffset, y = saveOffset)
+                            .background(Color(0xFF1A237E)) // Deep Blue
+                            .border(width = 2.dp, color = Color.Black, shape = RectangleShape)
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .offset(x = cancelOffset, y = cancelOffset)
-                                .background(Color.White)
-                                .border(width = 2.dp, color = Color.Black, shape = RectangleShape)
-                                .fillMaxWidth()
-                                .padding(vertical = 16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "CANCEL",
-                                color = Color.Black,
-                                fontSize = 18.sp,
-                                fontFamily = BebasNeue,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-
-                    // Save Button
-                    val saveInteractionSource = remember { MutableInteractionSource() }
-                    val saveIsPressed by saveInteractionSource.collectIsPressedAsState()
-                    val saveOffset by animateDpAsState(
-                        targetValue = if (saveIsPressed) 0.dp else (-4).dp,
-                        label = "SaveBtn"
-                    )
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .background(Color.Black)
-                            .clickable(
-                                onClick = {
-                                    if (title.isNotBlank() || content.isNotBlank()) {
-                                        onSave(title, content)
-                                    }
-                                },
-                                interactionSource = saveInteractionSource,
-                                indication = null
-                            )
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .offset(x = saveOffset, y = saveOffset)
-                                .background(Color(0xFF1A237E)) // Deep Blue
-                                .border(width = 2.dp, color = Color.Black, shape = RectangleShape)
-                                .fillMaxWidth()
-                                .padding(vertical = 16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "SAVE",
-                                color = Color.White,
-                                fontSize = 18.sp,
-                                fontFamily = BebasNeue,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
+                        Text(
+                            text = "SAVE",
+                            color = Color.White,
+                            fontSize = 24.sp,
+                            fontFamily = BebasNeue,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }

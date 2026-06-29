@@ -24,10 +24,12 @@ import com.example.tascade.data.OfflineNoteRepository
 import com.example.tascade.navigation.AppRoutes.POMODORO
 import com.example.tascade.navigation.AppRoutes.TASKS
 import com.example.tascade.navigation.AppRoutes.NOTES
+import com.example.tascade.navigation.AppRoutes.DETAIL_NOTE
 import com.example.tascade.navigation.AppRoutes.EDIT_NOTE
 import com.example.tascade.ui.pomodoro.PomodoroScreen
 import com.example.tascade.ui.todo.TodoScreen
 import com.example.tascade.ui.notes.NotesListScreen
+import com.example.tascade.ui.notes.NoteDetailScreen
 import com.example.tascade.ui.notes.NoteEditScreen
 
 @Composable
@@ -70,13 +72,39 @@ fun TascadeNavGraph(
             NotesListScreen(
                 notes = notes,
                 onNoteClick = { note ->
-                    navController.navigate("edit_note_route?noteId=${note.id}")
+                    navController.navigate("detail_note_route?noteId=${note.id}")
                 },
                 onAddNoteClick = {
                     navController.navigate("edit_note_route")
                 },
-                onDeleteNote = { note ->
-                    notesViewModel.deleteNote(note)
+                globalPadding = innerPadding
+            )
+        }
+        composable(
+            route = DETAIL_NOTE,
+            arguments = listOf(
+                navArgument("noteId") {
+                    type = NavType.IntType
+                    defaultValue = -1
+                }
+            )
+        ) { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getInt("noteId") ?: -1
+            val notesList by notesViewModel.notes.collectAsState()
+            val note = notesList.find { it.id == noteId }
+
+            NoteDetailScreen(
+                note = note,
+                onNavigateUp = {
+                    navController.popBackStack()
+                },
+                onEditClick = {
+                    navController.navigate("edit_note_route?noteId=$noteId")
+                },
+                onDeleteClick = {
+                    if (note != null) {
+                        notesViewModel.deleteNote(note)
+                    }
                 },
                 globalPadding = innerPadding
             )
@@ -96,7 +124,7 @@ fun TascadeNavGraph(
 
             NoteEditScreen(
                 note = note,
-                onSave = { title, content ->
+                onSaveClick = { title, content ->
                     if (note == null) {
                         notesViewModel.addNote(title, content)
                     } else {
@@ -104,9 +132,8 @@ fun TascadeNavGraph(
                             note.copy(title = title, content = content, timestamp = System.currentTimeMillis())
                         )
                     }
-                    navController.popBackStack()
                 },
-                onBack = {
+                onNavigateUp = {
                     navController.popBackStack()
                 },
                 globalPadding = innerPadding
@@ -114,6 +141,3 @@ fun TascadeNavGraph(
         }
     }
 }
-
-
-//remember abt modifier's align function for certain ui components inside bigger ui components, they don't work as intended in certain layouts like rows/columns
