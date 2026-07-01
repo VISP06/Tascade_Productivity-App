@@ -1,5 +1,8 @@
 package com.example.tascade.ui.notes
 
+import android.media.SoundPool
+import androidx.compose.ui.platform.LocalContext
+import com.example.tascade.R
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -48,6 +51,16 @@ fun NoteDetailScreen(
     onDeleteClick: () -> Unit,
     globalPadding: PaddingValues
 ) {
+    val context = LocalContext.current
+    val soundPool = remember {
+        SoundPool.Builder()
+            .setMaxStreams(5)
+            .build()
+    }
+    val pageTurnId = remember {
+        soundPool.load(context, R.raw.page_turn, 1)
+    }
+
     Scaffold(
         topBar = {
             Box(
@@ -79,7 +92,10 @@ fun NoteDetailScreen(
                                 .size(48.dp)
                                 .background(Color.Black)
                                 .clickable(
-                                    onClick = onNavigateUp,
+                                    onClick = {
+                                        soundPool.play(pageTurnId, 1f, 1f, 1, 0, 1f)
+                                        onNavigateUp()
+                                    },
                                     interactionSource = backInteractionSource,
                                     indication = null
                                 )

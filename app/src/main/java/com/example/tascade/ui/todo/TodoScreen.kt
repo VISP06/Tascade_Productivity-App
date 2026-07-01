@@ -57,6 +57,10 @@ fun TodoScreen(
         soundPool.load(context, R.raw.button_press, 1)
     }
 
+    val scratchSoundId = remember {
+        soundPool.load(context, R.raw.todo_scratch, 1)
+    }
+
     Scaffold(
         topBar = { TodoTopBar(topBarHeadingId = R.string.top_bar_title1) },
         floatingActionButton = { TodoFAB(
@@ -86,7 +90,12 @@ fun TodoScreen(
             TodoList(
                 tasks = tasks,
                 contentPaddingValues = globalPadding,
-                onTaskChecked = { task -> vm.updateTask(task) },
+                onTaskChecked = { task ->
+                    if (!task.isCompleted) {
+                        soundPool.play(scratchSoundId, 1f, 1f, 1, 0, 1f)
+                    }
+                    vm.updateTask(task)
+                },
                 onTaskDeleted = { task -> vm.deleteTodo(task) },
                 lazyListState = lazyListState,
                 )

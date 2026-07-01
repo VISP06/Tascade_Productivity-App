@@ -1,5 +1,8 @@
 package com.example.tascade.ui.notes
 
+import android.media.SoundPool
+import androidx.compose.ui.platform.LocalContext
+import com.example.tascade.R
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -48,13 +51,29 @@ fun NotesListScreen(
     onAddNoteClick: () -> Unit,
     globalPadding: PaddingValues
 ) {
+    val context = LocalContext.current
+    val soundPool = remember {
+        SoundPool.Builder()
+            .setMaxStreams(5)
+            .build()
+    }
+    val heavyClickId = remember {
+        soundPool.load(context, R.raw.heavy_click, 1)
+    }
+    val pageTurnId = remember {
+        soundPool.load(context, R.raw.page_turn, 1)
+    }
+
     Scaffold(
         topBar = {
             NotesTopBar(title = "NOTES")
         },
         floatingActionButton = {
             NotesFAB(
-                onClick = onAddNoteClick,
+                onClick = {
+                    soundPool.play(heavyClickId, 1f, 1f, 1, 0, 1f)
+                    onAddNoteClick()
+                },
                 modifier = Modifier.padding(globalPadding)
             )
         }
@@ -119,7 +138,10 @@ fun NotesListScreen(
                     items(notes, key = { it.id }) { note ->
                         NoteCard(
                             note = note,
-                            onClick = { onNoteClick(note) }
+                            onClick = {
+                                soundPool.play(pageTurnId, 1f, 1f, 1, 0, 1f)
+                                onNoteClick(note)
+                            }
                         )
                     }
                 }
